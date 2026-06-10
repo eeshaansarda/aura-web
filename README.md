@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# aura-web
 
-## Getting Started
+The public web card for Aura — when someone scans an Aura QR code (`https://aura.bio/u/{slug}`) without the app installed, they land here: a browser-rendered business card with a one-tap **Save Contact** (vCard download).
 
-First, run the development server:
+Companion repo to the Aura mobile app. Reads profile data from the same Supabase backend via the `get-profile` Edge Function — no direct database access, no service-role key.
+
+## Routes
+
+| Route | Purpose |
+|-------|---------|
+| `/u/{slug}` | Master profile card. `?sub={profileId}` renders a subprofile. |
+| `/u/{slug}/vcf` | vCard 3.0 download (honours `?sub=`). |
+| `/` | Minimal landing ("Get Aura" CTA target). |
+
+Unknown slugs return a branded 404.
+
+## Development
 
 ```bash
+npm install
+cp .env.example .env.local   # fill in values
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000/u/<slug>` with a real slug from the `users` table.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Var | Value |
+|-----|-------|
+| `SUPABASE_URL` | The Supabase project URL (same as the mobile app's `EXPO_PUBLIC_SUPABASE_URL`) |
+| `SUPABASE_ANON_KEY` | The publishable/anon key (same as the mobile app's `EXPO_PUBLIC_SUPABASE_ANON_KEY`) |
+| `NEXT_PUBLIC_SITE_URL` | The canonical site origin (`https://aura.bio` in production) |
 
-## Learn More
+Both Supabase vars are server-only — nothing is exposed to the client bundle.
 
-To learn more about Next.js, take a look at the following resources:
+## Deploying to Vercel (free tier)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Push this repo to GitHub.
+2. [vercel.com/new](https://vercel.com/new) → import the repo. Framework auto-detects as Next.js; no build settings needed.
+3. Add the three environment variables above (set `NEXT_PUBLIC_SITE_URL=https://aura.bio`).
+4. Deploy, then sanity-check `https://<project>.vercel.app/u/<slug>`.
+5. Project → Settings → Domains → add `aura.bio`, and point DNS at Vercel (A record `76.76.21.21` or the CNAME Vercel shows). Once DNS propagates, every QR code already in the wild starts resolving — no app release required.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Backend contract
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`POST {SUPABASE_URL}/functions/v1/get-profile` with `{ slug, subId? }` → `{ profile, userSlug }` or 404. The profile shape is mirrored in [`lib/types.ts`](lib/types.ts) from the mobile repo's `types/cloud.ts` — coordinate schema changes across both repos.
