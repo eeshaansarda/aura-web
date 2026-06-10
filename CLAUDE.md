@@ -36,4 +36,4 @@ Follow `../aura/DESIGN.md` exactly — tokens are defined as CSS variables in `a
 
 ## Environment
 
-`SUPABASE_URL`, `SUPABASE_ANON_KEY` (server-only; same values as the mobile app's `EXPO_PUBLIC_*` vars), `NEXT_PUBLIC_SITE_URL`. See `.env.example`. Deployment: Vercel free tier + `aura.bio` domain — steps in README.md.
+`SUPABASE_URL`, `SUPABASE_ANON_KEY` (server-only; same values as the mobile app's `EXPO_PUBLIC_*` vars). See `.env.example`. Deployment: Vercel free tier + `aura.bio` domain — steps in README.md.

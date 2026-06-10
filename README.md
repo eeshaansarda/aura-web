@@ -30,15 +30,14 @@ Open `http://localhost:3000/u/<slug>` with a real slug from the `users` table.
 |-----|-------|
 | `SUPABASE_URL` | The Supabase project URL (same as the mobile app's `EXPO_PUBLIC_SUPABASE_URL`) |
 | `SUPABASE_ANON_KEY` | The publishable/anon key (same as the mobile app's `EXPO_PUBLIC_SUPABASE_ANON_KEY`) |
-| `NEXT_PUBLIC_SITE_URL` | The canonical site origin (`https://aura.bio` in production) |
 
-Both Supabase vars are server-only — nothing is exposed to the client bundle.
+Both vars are server-only — nothing is exposed to the client bundle.
 
 ## Deploying to Vercel (free tier)
 
 1. Push this repo to GitHub.
 2. [vercel.com/new](https://vercel.com/new) → import the repo. Framework auto-detects as Next.js; no build settings needed.
-3. Add the three environment variables above (set `NEXT_PUBLIC_SITE_URL=https://aura.bio`).
+3. Add the two environment variables above.
 4. Deploy, then sanity-check `https://<project>.vercel.app/u/<slug>`.
 5. Project → Settings → Domains → add `aura.bio`, and point DNS at Vercel (A record `76.76.21.21` or the CNAME Vercel shows). Once DNS propagates, every QR code already in the wild starts resolving — no app release required.
 
