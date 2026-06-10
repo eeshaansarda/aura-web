@@ -1,11 +1,23 @@
-// TEMPORARY — verifies which env values the deployment actually carries.
-// Remove after debugging. Values are masked.
+// TEMPORARY — verifies the get-profile call as the deployment sees it.
+// Remove after debugging.
 export async function GET() {
-  const url = process.env.SUPABASE_URL ?? "(unset)";
-  const key = process.env.SUPABASE_ANON_KEY ?? "(unset)";
+  const url = process.env.SUPABASE_URL!;
+  const key = process.env.SUPABASE_ANON_KEY!;
+
+  const res = await fetch(`${url}/functions/v1/get-profile`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${key}`,
+      apikey: key,
+    },
+    body: JSON.stringify({ slug: "sardaeeshaan53" }),
+    cache: "no-store",
+  });
+
+  const body = await res.text();
   return Response.json({
-    supabase_url: url,
-    anon_key_prefix: key.slice(0, 18),
-    anon_key_length: key.length,
+    status: res.status,
+    body: body.slice(0, 200),
   });
 }
