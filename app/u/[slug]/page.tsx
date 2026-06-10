@@ -43,6 +43,8 @@ export default async function CardPage({ params, searchParams }: Props) {
 
   const { profile, userSlug } = data;
   const vcfHref = `/u/${userSlug}/vcf${sub ? `?sub=${encodeURIComponent(sub)}` : ""}`;
+  // Vercel system env (e.g. "aura-web-xi.vercel.app"); aura.bio once the domain is attached
+  const host = process.env.VERCEL_PROJECT_PRODUCTION_URL ?? "aura.bio";
 
   return (
     <main className="relative flex flex-1 flex-col items-center px-5 py-12 sm:py-20">
@@ -57,7 +59,7 @@ export default async function CardPage({ params, searchParams }: Props) {
 
         <footer className="rise rise-3 mt-10 flex flex-col items-center gap-3">
           <p className="font-mono text-[13px] text-muted-foreground">
-            aura.bio/u/{userSlug}
+            {host}/u/{userSlug}
           </p>
           <Link
             href="/"
