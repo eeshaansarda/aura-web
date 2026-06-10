@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProfile } from "@/lib/profile";
 import { ProfileCard } from "@/components/profile-card";
+import { TrackVisit } from "@/components/track-visit";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -55,6 +56,7 @@ export default async function CardPage({ params, searchParams }: Props) {
       />
 
       <div className="relative w-full max-w-md">
+        <TrackVisit slug={userSlug} sub={sub} />
         <ProfileCard profile={profile} vcfHref={vcfHref} />
 
         <footer className="rise rise-3 mt-10 flex flex-col items-center gap-3">
