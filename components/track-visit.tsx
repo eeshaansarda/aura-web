@@ -8,7 +8,7 @@ import posthog from "posthog-js";
 const KEY = process.env.NEXT_PUBLIC_POSTHOG_KEY;
 const HOST = process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "https://us.i.posthog.com";
 
-export function TrackVisit({ slug, sub }: { slug: string; sub?: string }) {
+export function TrackVisit({ profileId }: { profileId: string }) {
   useEffect(() => {
     if (!KEY) return;
     try {
@@ -19,11 +19,11 @@ export function TrackVisit({ slug, sub }: { slug: string; sub?: string }) {
           capture_pageview: false,
         });
       }
-      posthog.capture("web_card_visited", { slug, sub: sub ?? null });
+      posthog.capture("web_card_visited", { profile_id: profileId });
     } catch {
       // analytics must never break the card
     }
-  }, [slug, sub]);
+  }, [profileId]);
 
   return null;
 }

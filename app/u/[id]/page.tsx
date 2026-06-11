@@ -6,7 +6,8 @@ import { ProfileCard } from "@/components/profile-card";
 import { TrackVisit } from "@/components/track-visit";
 
 interface Props {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ id: string }>;
+  // Legacy ?sub= links carried the profile id in the query — honour it.
   searchParams: Promise<{ sub?: string }>;
 }
 
@@ -14,9 +15,9 @@ export async function generateMetadata({
   params,
   searchParams,
 }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const { id } = await params;
   const { sub } = await searchParams;
-  const data = await getProfile(slug, sub);
+  const data = await getProfile(sub ?? id);
 
   if (!data) return { title: "Card not found — Aura" };
 
@@ -36,16 +37,15 @@ export async function generateMetadata({
 }
 
 export default async function CardPage({ params, searchParams }: Props) {
-  const { slug } = await params;
+  const { id } = await params;
   const { sub } = await searchParams;
-  const data = await getProfile(slug, sub);
+  const profileId = sub ?? id;
+  const data = await getProfile(profileId);
 
   if (!data) notFound();
 
-  const { profile, userSlug } = data;
-  const vcfHref = `/u/${userSlug}/vcf${sub ? `?sub=${encodeURIComponent(sub)}` : ""}`;
-  // Vercel system env (e.g. "aura-web-xi.vercel.app"); aura.bio once the domain is attached
-  const host = process.env.VERCEL_PROJECT_PRODUCTION_URL ?? "aura.bio";
+  const { profile } = data;
+  const vcfHref = `/u/${profileId}/vcf`;
 
   return (
     <main className="relative flex flex-1 flex-col items-center px-5 py-12 sm:py-20">
@@ -56,12 +56,12 @@ export default async function CardPage({ params, searchParams }: Props) {
       />
 
       <div className="relative w-full max-w-md">
-        <TrackVisit slug={userSlug} sub={sub} />
+        <TrackVisit profileId={profileId} />
         <ProfileCard profile={profile} vcfHref={vcfHref} />
 
         <footer className="rise rise-3 mt-10 flex flex-col items-center gap-3">
-          <p className="font-mono text-[13px] text-muted-foreground">
-            {host}/u/{userSlug}
+          <p className="font-mono text-[13px] text-muted-foreground tracking-wide">
+            aura.bio
           </p>
           <Link
             href="/"

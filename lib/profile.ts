@@ -1,9 +1,8 @@
 import type { ProfileResponse } from "./types";
 
-export async function getProfile(
-  slug: string,
-  subId?: string,
-): Promise<ProfileResponse | null> {
+// Profiles are addressed by their opaque UUID — master and subprofiles look
+// identical from the URL, so a subprofile link can't be edited into the master.
+export async function getProfile(profileId: string): Promise<ProfileResponse | null> {
   const url = process.env.SUPABASE_URL;
   const anonKey = process.env.SUPABASE_ANON_KEY;
 
@@ -18,7 +17,7 @@ export async function getProfile(
       Authorization: `Bearer ${anonKey}`,
       apikey: anonKey,
     },
-    body: JSON.stringify(subId ? { slug, subId } : { slug }),
+    body: JSON.stringify({ profileId }),
     next: { revalidate: 60 },
   });
 

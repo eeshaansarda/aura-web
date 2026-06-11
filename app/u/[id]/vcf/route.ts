@@ -3,12 +3,12 @@ import { generateVCF } from "@/lib/vcf";
 
 export async function GET(
   req: Request,
-  { params }: { params: Promise<{ slug: string }> },
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const { slug } = await params;
+  const { id } = await params;
   const sub = new URL(req.url).searchParams.get("sub") ?? undefined;
 
-  const data = await getProfile(slug, sub);
+  const data = await getProfile(sub ?? id);
 
   if (!data) {
     return new Response("Not found", { status: 404 });

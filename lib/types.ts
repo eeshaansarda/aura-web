@@ -30,5 +30,5 @@ export interface DbProfile {
 
 export interface ProfileResponse {
   profile: DbProfile;
-  userSlug: string;
+  userSlug: string | null; // null when addressed by profileId
 }
